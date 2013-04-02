@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 
 
 class NoRiskDominanceSolvable(Exception):
-        def __innit__(self, errno, msg):
-            self.args = (errno, msg)
-            self.errno = errno
-            self.msg = msg
-
-class BimatrixGame:
+    """
+    An exception to be thrown when risk dominance solvability is not possible. 
+    """
+    def __innit__(self, errno, msg):
+        self.args = (errno, msg)
+        
+class BimatrixTwoStrategyGame:
     '''Holds a bimatrix game data, and finds equilibria. Clone of BiMatrixGame.java'''
     def __init__(self, a1,a2,b1,b2,c1,c2,d1,d2):
         self.a1= float(a1)
@@ -27,6 +28,9 @@ class BimatrixGame:
         
     @classmethod
     def fromsymmetricpayoffs(cls,a1,b1,c1,d1):
+        """
+        Create a symmetryc game
+        """
         symmetric_game = cls(a1,a1,b1,c1,c1,b1,d1,d1)
         return symmetric_game
         
@@ -34,6 +38,9 @@ class BimatrixGame:
         return '[('+str(self.a1)+','+str(self.a2)+'), ('+str(self.b1)+','+str(self.b2)+'), \n ('+str(self.c1)+','+str(self.c2)+'), ('+str(self.d1)+','+str(self.d2)+')]'
        
     def find_pure_nash(self):
+        """
+        Finds pure equilibria
+        """
         ans = []
         if (self.a1>=self.c1 and self.a2>=self.b2):
             ans.append((1.0, 1.0))
@@ -49,6 +56,9 @@ class BimatrixGame:
         return ans
         
     def find_mixed_nash(self):
+        """
+        Finds mixed equilibria
+        """
         ans = []
         try:
             q = (self.d1-self.b1)/(self.a1-self.b1-self.c1+self.d1)
@@ -61,10 +71,16 @@ class BimatrixGame:
         
     
     def find_nash(self):
+        """
+        Finds all Nash equilibria
+        """
         return self.find_pure_nash() + self.find_mixed_nash()
      
     
     def find_unique_equilibrium(self, atol=10e-3):
+        """
+        Attemps to select one equilibrium. 
+        """
         candidates = self.find_nash()
         if (len(candidates)== 1):
             return candidates[0], "No selection needed."
