@@ -29,7 +29,7 @@ class BimatrixTwoStrategyGame:
     @classmethod
     def fromsymmetricpayoffs(cls,a1,b1,c1,d1):
         """
-        Create a symmetryc game
+        Create a symmetric game
         """
         symmetric_game = cls(a1,a1,b1,c1,c1,b1,d1,d1)
         return symmetric_game
@@ -79,7 +79,7 @@ class BimatrixTwoStrategyGame:
     
     def find_unique_equilibrium(self, atol=10e-3):
         """
-        Attemps to select one equilibrium. 
+        Attemps to select one equilibrium. First by risk dominance, then payoff dominance, then focal symmetry.
         """
         candidates = self.find_nash()
         if (len(candidates)== 1):
@@ -120,6 +120,9 @@ class BimatrixTwoStrategyGame:
         raise ValueError("Nothing holds for " + str(self))
 
     def expected_payoff(self, profile):
+        """
+        Computes the expected payoff given a profile 
+        """
         p = profile[0]
         q = profile[1]
         pi_1 =  p*q*self.a1+p*(1.0-q)*self.b1+(1.0-p)*q*self.c1+(1.0-p)*(1.0-q)*self.d1
