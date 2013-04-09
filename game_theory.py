@@ -52,6 +52,32 @@ class BimatrixTwoStrategyGame:
         symmetric_game = cls(a1, a1, b1, c1, c1, b1, d1, d1)
         return symmetric_game
 
+    @classmethod
+    def prisonersdilemma(cls, reward=3.0, sucker=0.0, temptation=4.0, punishment=1.0):
+        """
+        Create a prisoners dilemma
+        """
+        a1 = reward
+        b1 = sucker
+        c1 = temptation
+        d1 = punishment
+        pd = cls(a1, a1, b1, c1, c1, b1, d1, d1)
+        return pd
+
+    @classmethod
+    def battleofthesexes(cls):
+        """
+        Create a battle of the sexes game (see pg 11 on Gibbons book).
+        """
+        return cls(2.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0)
+
+    @classmethod
+    def matchingpennies(cls):
+        """
+        Create a matching pennies game (see pg 29 on Gibbons book).
+        """
+        return cls(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0)
+
     def __str__(self):
         return '[(' + str(self.a1) + ',' + str(self.a2) + '), (' + str(self.b1) + ',' + str(self.b2) + '), \n (' + str(self.c1) + ',' + str(self.c2) + '), (' + str(self.d1) + ',' + str(self.d2) + ')]'
 
@@ -220,11 +246,21 @@ class BimatrixTwoStrategyGame:
         for profile in profiles:
             (pi_1, pi_2) = self.expected_payoff(profile)
             plt.plot(pi_1, pi_2, 'bo-')
-        if select_equilibrium:
-            selected, msg = self.find_unique_equilibrium()
-            (pi_1, pi_2) = self.expected_payoff(selected)
-            plt.plot(pi_1, pi_2, 'ro-')
+        if select_equilibrium and len(profiles) > 1:
+            try:
+                selected = self.find_risk_dominant_equilibrium()
+                (pi_1, pi_2) = self.expected_payoff(selected)
+                plt.plot(pi_1, pi_2, 'ro-', label='Risk dominant')
+            except NoEquilibriumSelected:
+                pass
+            try:
+                selected = self.find_payoff_dominant_equilibrium()
+                (pi_1, pi_2) = self.expected_payoff(selected)
+                plt.plot(pi_1, pi_2, 'go-', label='Payoff dominant')
+            except NoEquilibriumSelected:
+                pass
         plt.xlabel('Row player')
         plt.ylabel('Column player')
         plt.grid(grid_on)
+        plt.close()
         return fig
