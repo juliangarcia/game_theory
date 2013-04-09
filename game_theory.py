@@ -7,23 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class EquililibriumSelectionMethod:
-    """
-    Enumeration of possible equilibrium selection methods.
-    """
-    risk_dominance, payoff_dominance, focal_symmetry = range(3)
-
-    def __str__(self):
-        return 'Enum type: \n 0 - Risk dominance \n 1 - Payoff dominance \n 2 - Focal symmetry'
-
-    def __main__(self):
-        return self.__str__()
-
-
 class NoEquilibriumSelected(Exception):
     """
-    An exception to be thrown when risk dominance
-    solvability is not possible.
+    An exception to be thrown when a given function cannot select a unique equilibrium.
     """
     def __innit__(self, errno, msg):
         self.args = (errno, msg)
