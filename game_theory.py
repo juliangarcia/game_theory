@@ -1,8 +1,8 @@
-'''
-Created on Mar 23, 2012
+    '''
+    Created on Mar 23, 2012
 
-@author: garcia
-'''
+    @author: garcia
+    '''
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -57,7 +57,9 @@ class BimatrixTwoStrategyGame:
 
     def find_pure_nash(self):
         """
-        Finds pure equilibria
+        Finds pure equilibria by exahustively testing the four possibilities.
+        Returns a list of tuples (p,q) where p is the probability of player 1 playing the first strategy,
+        and q is the probability of player 2 playing the first strategy.
         """
         ans = []
         if (self.a1 >= self.c1 and self.a2 >= self.b2):
@@ -75,7 +77,7 @@ class BimatrixTwoStrategyGame:
 
     def find_mixed_nash(self):
         """
-        Finds mixed equilibria
+        Finds the mixed equilibria, if it exists.
         """
         ans = []
         try:
@@ -89,7 +91,7 @@ class BimatrixTwoStrategyGame:
 
     def find_nash(self):
         """
-        Finds all Nash equilibria
+        Returns the set of Nash equilibria.
         """
         return self.find_pure_nash() + self.find_mixed_nash()
 
