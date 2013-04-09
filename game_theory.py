@@ -1,8 +1,8 @@
-    '''
+'''
     Created on Mar 23, 2012
 
     @author: garcia
-    '''
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -95,95 +95,79 @@ class BimatrixTwoStrategyGame:
         """
         return self.find_pure_nash() + self.find_mixed_nash()
 
-    def find_unique_equilibrium(self, atol=10e-3):
+    def find_risk_dominant_equilibrium(self, atol=10e-3):
         """
-        Attemps to select one equilibrium.
-        First by risk dominance, then payoff dominance, then focal symmetry.
+        Attemps to select one equilibrium by risk dominance.
         """
         candidates = self.find_nash()
         if (len(candidates) == 1):
-            return candidates[0], "No selection needed."
-        #TODO: Double check this
-        #if (len(candidates) > 3):
-        #    raise ValueError("Degenerate case, too many equilibria")
-
+            return candidates[0]
+        if (len(candidates) > 3):
+            raise ValueError("Degenerate case")
         if ((0.0, 1.0) in candidates):
             #we are off diagonal
             a = (self.d1 - self.b1) * (self.a2 - self.b2)
             b = (self.a1 - self.c1) * (self.d2 - self.c2)
-            try:
-                toBeFlipped = self.reduce_by_risk_dominance(a, b)
-                return (1.0 - toBeFlipped[0], toBeFlipped[1]), "Risk dominance"
-            except NoEquilibriumSelected:
-                if ((self.c1 >= self.b1 and self.c2 >= self.b2) and (self.c1 > self.b1 or self.c2 > self.b2)):
-                    return (0.0, 1.0), "Payoff dominance"
-                if ((self.c1 <= self.b1 and self.c2 <= self.b2) and (self.c1 < self.b1 or self.c2 < self.b2)):
-                    return (1.0, 0.0), "Payoff dominance"
+            if (a == b):
+                raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
+            elif (a > b):
+                toBeFlipped = (0.0, 0.0)
+            elif (a < b):
+                toBeFlipped = (1.0, 1.0)
+            return (1.0 - toBeFlipped[0], toBeFlipped[1]), "Risk dominance"
         else:
             #we are on diagonal
             a = (self.b1 - self.d1) * (self.c2 - self.d2)
             b = (self.c1 - self.a1) * (self.b2 - self.a2)
-            try:
-                risk_dominant = self.reduce_by_risk_dominance(a, b)
-                return risk_dominant, "Risk dominance"
-            except NoEquilibriumSelected:
-                if ((self.a1 >= self.d1 and self.a2 >= self.d2) and (self.a1 > self.d1 or self.a2 > self.d2)):
-                    return (1.0, 1.0), "Payoff dominance"
-                if ((self.a1 <= self.d1 and self.a2 <= self.d2) and (self.a1 < self.d1 or self.a2 < self.d2)):
-                    return (0.0, 0.0), "Payoff dominance"
-        #attemp focal symmetry
-        for profile in candidates:
-            if(np.abs(profile[0] - profile[1]) < atol):
-                if (profile[0] < 1.0 or profile[0] > 0.0):
-                    return profile, "Focal symmetry"
+            if (a == b):
+                raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
+            elif (a > b):
+                return (0.0, 0.0)
+            elif (a < b):
+                return (1.0, 1.0)
+    raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
 
-        raise ValueError("Nothing holds for " + str(self))
-
-    def find_unique_equilibrium_with_payoff_dominance(self, atol=10e-3):
+    def find_payoff_dominant_equilibrium(self, atol=10e-3):
         """
-        Attemps to select one equilibrium.
-        First by risk dominance, then payoff dominance, then focal symmetry.
+        Attemps to select one equilibrium  by payoff dominance.
         """
         candidates = self.find_nash()
         if (len(candidates) == 1):
-            return candidates[0], "No selection needed."
-        #TODO: This needs more elegance
-        #if (len(candidates) > 3):
-        #    raise ValueError("Degenerate case, too many equilibria")
-
+            return candidates[0]
+        if (len(candidates) > 3):
+            raise ValueError("Degenerate case")
         if ((0.0, 1.0) in candidates):
             #we are off diagonal
-            a = (self.d1 - self.b1) * (self.a2 - self.b2)
-            b = (self.a1 - self.c1) * (self.d2 - self.c2)
             if ((self.c1 >= self.b1 and self.c2 >= self.b2) and (self.c1 > self.b1 or self.c2 > self.b2)):
-                return (0.0, 1.0), "Payoff dominance"
+                return (0.0, 1.0)
             if ((self.c1 <= self.b1 and self.c2 <= self.b2) and (self.c1 < self.b1 or self.c2 < self.b2)):
-                return (1.0, 0.0), "Payoff dominance"
-            try:
-                toBeFlipped = self.reduce_by_risk_dominance(a, b)
-                return (1.0 - toBeFlipped[0], toBeFlipped[1]), "Risk dominance"
-            except NoEquilibriumSelected:
-                pass
+                return (1.0, 0.0)
+            raise NoEquilibriumSelected("No payoff dominant equilibrium for game: " + str(self))
         else:
             #we are on diagonal
             a = (self.b1 - self.d1) * (self.c2 - self.d2)
             b = (self.c1 - self.a1) * (self.b2 - self.a2)
             if ((self.a1 >= self.d1 and self.a2 >= self.d2) and (self.a1 > self.d1 or self.a2 > self.d2)):
-                return (1.0, 1.0), "Payoff dominance"
+                return (1.0, 1.0)
             if ((self.a1 <= self.d1 and self.a2 <= self.d2) and (self.a1 < self.d1 or self.a2 < self.d2)):
-                return (0.0, 0.0), "Payoff dominance"
-            try:
-                risk_dominant = self.reduce_by_risk_dominance(a, b)
-                return risk_dominant, "Risk dominance"
-            except NoEquilibriumSelected:
-                pass
+                return (0.0, 0.0)
+            raise NoEquilibriumSelected("No payoff dominant equilibrium for game: " + str(self))
+
+    def find_focal_equilibrium_by_symmetry(self, atol=10e-3):
+        """
+        If it exists, returns a mixed equilibrium if it is also symmetric
+        """
+        candidates = self.find_nash()
         #attemp focal symmetry
         for profile in candidates:
             if(np.abs(profile[0] - profile[1]) < atol):
                 if (profile[0] < 1.0 or profile[0] > 0.0):
-                    return profile, "Focal symmetry"
+                    return profile
+        raise NoEquilibriumSelected("No focal symmetry for game: " + str(self))
 
-        raise ValueError("Nothing holds for " + str(self))
+    def find__one_pareto_optimal_equilibrium(self, atol=10e-3):
+        candidates = self.find_nash()
+        return candidates[np.argmax([sum(self.expected_payoff(candidate)) for candidate in candidates])]
 
     def expected_payoff(self, profile):
         """
@@ -196,14 +180,6 @@ class BimatrixTwoStrategyGame:
         pi_2 = p * q * self.a2 + p * (1.0 - q) * self.b2 + (
             1.0 - p) * q * self.c2 + (1.0 - p) * (1.0 - q) * self.d2
         return (pi_1, pi_2)
-
-    def reduce_by_risk_dominance(self, a, b):
-        if (a > b):
-            return (0.0, 0.0)
-        if (a < b):
-            return(1.0, 1.0)
-        raise NoEquilibriumSelected(
-            "No risk dominance, no payoff dominance: " + str(self))
 
     def plot_payoff_space(self, size_x=5, size_y=5, grid_on=True, select_equilibrium=True):
         fig = plt.figure(figsize=(size_x, size_y))
