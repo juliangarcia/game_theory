@@ -125,7 +125,7 @@ class BimatrixTwoStrategyGame:
                 return (0.0, 0.0)
             elif (a < b):
                 return (1.0, 1.0)
-    raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
+        raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
 
     def find_payoff_dominant_equilibrium(self, atol=10e-3):
         """
@@ -145,8 +145,6 @@ class BimatrixTwoStrategyGame:
             raise NoEquilibriumSelected("No payoff dominant equilibrium for game: " + str(self))
         else:
             #we are on diagonal
-            a = (self.b1 - self.d1) * (self.c2 - self.d2)
-            b = (self.c1 - self.a1) * (self.b2 - self.a2)
             if ((self.a1 >= self.d1 and self.a2 >= self.d2) and (self.a1 > self.d1 or self.a2 > self.d2)):
                 return (1.0, 1.0)
             if ((self.a1 <= self.d1 and self.a2 <= self.d2) and (self.a1 < self.d1 or self.a2 < self.d2)):
