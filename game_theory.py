@@ -126,7 +126,7 @@ class BimatrixTwoStrategyGame:
                 toBeFlipped = (0.0, 0.0)
             elif (a < b):
                 toBeFlipped = (1.0, 1.0)
-            return (1.0 - toBeFlipped[0], toBeFlipped[1]), "Risk dominance"
+            return (1.0 - toBeFlipped[0], toBeFlipped[1])
         else:
             #we are on diagonal
             a = (self.b1 - self.d1) * (self.c2 - self.d2)
