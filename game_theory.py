@@ -38,12 +38,12 @@ class BimatrixTwoStrategyGame:
 
     def get_as_numpy_array(self):
         """
-        Returns a numpy array with 4 elements
+        Returns a numpy array with 2x2 elements
         if the game is symmetric, or with 8 elements if the game
         is not symmetric
         """
         if self.is_symmetric():
-            return np.array([self.a1, self.b1, self.c1, self.d1])
+            return np.array([[self.a1, self.b1], [self.c1, self.d1]])
         else:
             return np.array([self.a1, self.a2, self.b1, self.b2, self.c1, self.c2, self.d1, self.d2])
 
