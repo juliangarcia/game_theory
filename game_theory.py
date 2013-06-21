@@ -38,8 +38,8 @@ class BimatrixTwoStrategyGame:
 
     def get_as_numpy_array(self):
         """
-        Returns a numpy array with 2x2 elements
-        if the game is symmetric, or with 8 elements if the game
+        Returns a numpy array with shape 2x2 
+        if the game is symmetric, or with shape 1x8 if the game
         is not symmetric
         """
         if self.is_symmetric():
