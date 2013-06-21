@@ -130,11 +130,11 @@ class BimatrixTwoStrategyGame:
         """
         candidates = self.find_nash()
         if (len(candidates) == 1):
-            raise NoEquilibriumSelected("Risk dominant does not make sense for game: " + str(self))
+            raise NoEquilibriumSelected("Risk dominanance does not make sense for game {}, not a coordination game.".format(str(self)))
         if (len(candidates) > 3):
             raise ValueError("Degenerate case")
         #It is a coordination game so let us compute
-        corner_1 = (self.a1 - self.c1)*(self.a2 - self.b2) 
+        corner_1 = (self.a1 - self.c1)*(self.a2 - self.b2)
         corner_2 = (self.d1 - self.b1)*(self.d2 - self.c2)
         if corner_1 > corner_2:
             return (1.0, 1.0)
@@ -150,8 +150,7 @@ class BimatrixTwoStrategyGame:
         candidates = self.find_nash()
         #attemp focal symmetry
         for profile in candidates:
-            if(np.abs(profile[0] - profile[1]) < atol):
-                if (profile[0] < 1.0 or profile[0] > 0.0):
+            if (0.0 < profile[0] < 1.0 and 0.0 < profile[1] < 1.0 and np.abs(profile[0]-profile[1]) < atol):
                     return profile
         raise NoEquilibriumSelected("No focal symmetry for game: " + str(self))
 
@@ -248,5 +247,7 @@ class BimatrixTwoStrategyGame:
         plt.xlabel('Row player')
         plt.ylabel('Column player')
         plt.grid(grid_on)
+        if len(profiles) > 1:
+            plt.legend(loc='best', numpoints=1)
         plt.close()
         return fig

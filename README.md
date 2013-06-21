@@ -8,3 +8,4 @@ Implementation of classic solution concepts, and data structures to represent ga
 
 1. Pareto optimality functions
 2. Games with more than two strategies
+3. QRE 
