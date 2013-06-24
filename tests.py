@@ -58,6 +58,10 @@ class Test(unittest.TestCase):
         self.assertEqual(len(pennies.find_nash()), 1)
         self.assertEqual(pennies.find_nash()[0], (0.5, 0.5))
 
+    def testRiskDominanceOffDiagonal(self):
+        test_game = BimatrixTwoStrategyGame(6.0,6.0,4.9,7.0,6.1,4.0,3.0,3.0)
+        self.assertEqual(test_game.find_risk_dominant_equilibrium(), (1.0, 0.0))
+
 
 if __name__ == "__main__":
     unittest.main()

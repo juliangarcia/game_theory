@@ -81,6 +81,13 @@ class BimatrixTwoStrategyGame:
         """
         return cls(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0)
 
+    def transpose(self):
+        """
+        Relabels the game, labeling player 1 as player 2 and viceversa.
+        """
+        #self.cls(self.a1, self.a2, self.b1, self.b2, self.c1, self.c2, self.d1, self.d2)
+        return BimatrixTwoStrategyGame(self.b2, self.b1, self.d2, self.d1, self.a2, self.a1, self.c2, self.c1)
+
     def __str__(self):
         return '[(' + str(self.a1) + ',' + str(self.a2) + '), (' + str(self.b1) + ',' + str(self.b2) + '), \n (' + str(self.c1) + ',' + str(self.c2) + '), (' + str(self.d1) + ',' + str(self.d2) + ')]'
 
@@ -134,6 +141,19 @@ class BimatrixTwoStrategyGame:
         if (len(candidates) > 3):
             raise ValueError("Degenerate case")
         #It is a coordination game so let us compute
+        if (1.0, 1.0) in candidates:
+            ## on diagonal selection
+            return self._on_diagonal_risk_dominance()
+        elif (1.0, 0.0) in candidates:
+            ## off diagonal selection
+            return self._off_diagonal_risk_dominance()
+        else:
+            raise NoEquilibriumSelected("No risk dominant strategy for game {}.".format(str(self)))
+
+    def _on_diagonal_risk_dominance(self):
+        """
+        Assumes the two equilibria are on-diagonal.
+        """
         corner_1 = (self.a1 - self.c1)*(self.a2 - self.b2)
         corner_2 = (self.d1 - self.b1)*(self.d2 - self.c2)
         if corner_1 > corner_2:
@@ -142,6 +162,19 @@ class BimatrixTwoStrategyGame:
             return (0.0, 0.0)
         else:
             raise NoEquilibriumSelected("No risk dominant equilibrium for game: " + str(self))
+
+    def _off_diagonal_risk_dominance(self):
+        """
+        Assumes the two equilibria are off-diagonal.
+        """
+        transposed = self.transpose()
+        selected = transposed._on_diagonal_risk_dominance()
+        if (selected == (1.0, 1.0)):
+            return (1.0, 0.0)
+        elif (selected == (0.0, 0.0)):
+            return (0.0, 1.0)
+        else:
+            raise NoEquilibriumSelected("No risk dominant equilibrium after diagonalizing game: " + str(self))
 
     def find_focal_equilibrium_by_symmetry(self, atol=10e-3):
         """
